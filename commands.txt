@@ -1,0 +1,54 @@
+
+sudo yum install java-1.8.0
+
+wget https://downloads.apache.org/kafka/3.5.0/kafka_2.12-3.5.0.tgz
+
+tar -xvf kafka_2.12-3.5.0.tgz
+
+
+cd kafka_2.12-3.5.0
+
+
+
+#Packages required
+pip install kafka-python
+pip install s3fs
+
+#configure aws in local machine to send data to s3
+
+
+#Start Zoo-keeper:
+-------------------------------
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+
+#Increase EC2 memory
+export KAFKA_HEAP_OPTS="-Xmx256M -Xms128M"
+
+
+#Start Kafka-server:
+----------------------------------------
+cd kafka_2.12-3.3.1
+bin/kafka-server-start.sh config/server.properties
+
+
+
+#It is pointing to private server , change server.properties so that it can run in public IP 
+
+#To do this , you can follow any of the 2 approaches shared belwo --
+#Do a "sudo nano config/server.properties" - change ADVERTISED_LISTENERS to public ip of the EC2 instance
+
+
+Create the topic:
+-----------------------------
+bin/kafka-topics.sh --create --topic test_d_topic --bootstrap-server 44.201.192.159:9092 --replication-factor 1 --partitions 1
+
+
+Start Producer:
+--------------------------
+bin/kafka-console-producer.sh --topic test_d_topic --bootstrap-server 44.201.192.159:9092
+
+
+Start Consumer:
+-------------------------
+bin/kafka-console-consumer.sh --topic test_d_topic --bootstrap-server 44.201.192.159:9092
